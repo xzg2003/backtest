@@ -6,12 +6,11 @@ import xgboost as xgb1
 import common.util as zutil
 
 class MODEL():
-    def __init__(self, pre_flag, instruments, x_train, y_train, x_test, x_pre_test, param):
+    def __init__(self, instruments, x_train, y_train, x_test, x_pre_test, param):
         self.x_train = x_train # 训练集的特征
         self.y_train = y_train # 训练集的标签
         self.x_test = x_test # 测试集的特征
         self.x_pre_test = x_pre_test # 存放市场数据与模型预测结果合并后的表格
-        self.pre_flag = pre_flag
         self.instruments = instruments
         self.Depth = param['max_depth']
         pass
@@ -40,7 +39,7 @@ class MODEL():
         try:
             model = joblib.load(f'model_test.pkl')
             predictions = model.predict(self.x_test)
-            self.x_pre_test[f'pre_real_{self.pre_flag}'] = predictions.copy()
+            self.x_pre_test[f'pre_real'] = predictions.copy()
             t = zutil.Calc_Time("use model ")
             df_new = pd.DataFrame()
             for ins_id in self.instruments:
@@ -49,7 +48,7 @@ class MODEL():
                     continue
                 df = df.sort_values(by='datetime', ascending=True)
                 df.reset_index(drop=True,inplace=True)
-                df[f"pre_{self.pre_flag}"] =df[f"pre_real_{self.pre_flag}"].shift(1)
+                df[f"pre"] =df[f"pre_real"].shift(1)
                 df_new = pd.concat([df_new,df])
             
             zutil.save_file(df_new,f'./data/pre.pkl')

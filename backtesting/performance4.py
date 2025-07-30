@@ -80,15 +80,14 @@ class Performance():
         # self.years=3
         # self._cal_years()
         self.other_text = param["next_text"]
-        self.title = param["title"]
         time_p = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
         # 为生成html 文件名
         self.image_path= time_p
-        self.html_name = f'{time_p}-{self.title}'
+        self.html_name = f'{time_p}'
         self.data_common = Data_Common.create_instance()
 
         self.ins_list = instruments
-        self.model_flag = param['model_flag']
+        self.model_flag = 'pre_1'
         self.df_data={}
         self.data_common = Data_Common.create_instance()
         # 持仓记录
@@ -518,8 +517,8 @@ class Performance():
         ax.grid(alpha=0.3)
        
         # 显示图形
-        plt.show()
         plt.savefig(save_file)
+        #plt.show()
 
         # self.write_text_in_pic(save_file)
     # 将图片转化为base64
@@ -549,7 +548,7 @@ class Performance():
         
         long_profit = self.obj["factor"]["long_profit"]+self.obj["factor"]["long_loss"]-self.obj["long_df_fee"]
         short_profit = self.obj["factor"]["short_profit"]+self.obj["factor"]["short_loss"]-self.obj["short_df_fee"]
-        with open(f'{file_store_path}/{self.html_name}.html', 'w') as file:
+        with open(f'{file_store_path}/{self.html_name}.html', 'w', encoding='utf-8') as file:
             file.write('<html>\n')
             file.write(f'<head><meta charset="UTF-8"><title>{self.html_name}</title>\n')
             file.write('<script type="text/javascript" src="../static_js/echarts.min.js"></script> \n')

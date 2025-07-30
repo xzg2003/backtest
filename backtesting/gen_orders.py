@@ -35,12 +35,9 @@ class Trade_Orders():
         self.t_et = param["et"]
          # 开仓数量
         self.open_count =0
-        self.pre_flag = f"pre_{param['pre_flag']}"
+        self.pre_flag = "pre"
+        self.model_flag="pre_1"
 
-        if 'model_flag' in param:
-            self.model_flag=param['model_flag']
-        else:
-            self.model_flag="pre_1"
         # 预测表
         self.prediction_df = zutil.load_file('./data/pre.pkl')
         # 持仓记录
@@ -66,6 +63,7 @@ class Trade_Orders():
         industry_df['flag'] = 0
         industry_df['holding'] = 0
         industry_data_length = industry_df.shape[0]
+
         # 如果不能重复开仓，需要跳过一些数据
         skip_count = 0
         # 采用轮询的方式进行回测 i的取值范围是从0开始，到行数-1，一共的条数等于行数
@@ -211,3 +209,4 @@ class Trade_Orders():
         pool.close()
         pool.join()
         zutil.save_file(self.order_df,"./data/order.pkl")
+        #print(zutil.load_file(self.order_df))

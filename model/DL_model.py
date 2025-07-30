@@ -38,18 +38,18 @@ class ConvNet(nn.Module):
         return x
 
 class MODEL():
-    def __init__(self, pre_flag, instuments, x_train, y_train, x_test, x_pre_test, param={}):
+    def __init__(self, instuments, x_train, y_train, x_test, x_pre_test, param={}):
         if 'epochs' in param.keys():
             epochs = param['epochs']
         else:
             epochs = 50
         self.epochs = epochs
         self.model = ConvNet(x_train.shape[1])
+        self.best_model = self.model
         self.x_train = x_train # 训练集的特征
         self.y_train = y_train # 训练集的标签
         self.x_test = x_test # 测试集的特征
         self.x_pre_test = x_pre_test # 存放市场数据与模型预测结果合并后的表格
-        self.pre_flag = pre_flag
         self.instuments = instuments
 
     def prepare_train_data(self):
@@ -79,7 +79,7 @@ class MODEL():
             print(f'Epoch [{epoch+1}/{self.epochs}], Loss: {loss.item():.4f}, Time:{(end-start):.4f}s')
             if loss.item()<min_loss:
                 min_loss = loss.item()
-                torch.save(self.model.state_dict(), f'./model.pkl')
+                torch.save(self.model.state_dict(), f'./model/DL_model/model.pkl')
                 self.best_model = self.model
                 print('模型已保存')
         print('训练完成')
@@ -97,13 +97,11 @@ class MODEL():
             with torch.no_grad():
                 outputs = self.best_model(x).to('cpu')
                 pre = pd.DataFrame(outputs.numpy(),columns=['pre'])
-                df[f'pre_real_{self.pre_flag}']=pre
-                df[f'pre_{self.pre_flag}']=df[f'pre_real_{self.pre_flag}'].shift(1)   
+                df[f'pre'] = pre.shift(1)   
                 self.result.append(df)
             
         self.result = pd.concat(self.result, axis=0, ignore_index=True)
         zutil.save_file(self.result,f'./data/pre.pkl')
-        #self.result.to_csv('result1.csv')
     
     def run(self):
         self.prepare_train_data()
