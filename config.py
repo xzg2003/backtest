@@ -1,7 +1,7 @@
 global train_list
 
-DATA_DIR = 'C:/wzx/KCL/dataset/future_data' # 数据目录
-k_line_types = ['1d', '5m'] # K线类型
+DATA_DIR = '../data' # 数据目录
+k_line_types = '1d' # K线类型
 pre_flag = 1 # 预测标签
 model_name ='xgb' # 模型名称
 model_param = {'max_depth': 6} # 模型参数
@@ -18,8 +18,8 @@ FEE_FEE=0.0002
 # 启动资金
 AMOUNT_4_OPEN = 1000000
 
-instruments= ['A','AG']#,'AL','AP','AU','BU','C','CF','CJ','CS',
-             #'CU','EB','EG','FG','FU','HC','I','IC','IF','IH',
-            #'J','JD','JM','L','LU','LH','M','MA','NI','OI','P',
-            #'PB','PF','PG','PK','PP','RB','RM','RU','SA','SF',
-            #'SM','SN','SP','SR','SC','SS','TA','T','TF','UR','V','Y','ZN'] #期货类型
+instruments= ['A','AG','AL','AP','AU','BU','C','CF','CJ','CS',
+             'CU','EB','EG','FG','FU','HC','I','IC','IF','IH',
+            'J','JD','JM','L','LU','LH','M','MA','NI','OI','P',
+            'PB','PF','PG','PK','PP','RB','RM','RU','SA','SF',
+            'SM','SN','SP','SR','SC','SS','TA','T','TF','UR','V','Y','ZN'] #期货类型

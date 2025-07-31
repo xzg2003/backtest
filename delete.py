@@ -1,4 +1,6 @@
 # 删除期货因子的代码，万一大家算出来的因子有问题可以删了重新算
+# TODO: 后续增加新功能：结合 factor_name.json 文件来删除算错的因子。
+
 import os
 import csv
 

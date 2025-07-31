@@ -1,14 +1,18 @@
-# 资金流量指标，若收盘价在上半部分，且成交量放大，表示做多积极
+# FCT_Srmi：SRMI（相对动量指数）因子，衡量收盘价在指定窗口内的相对强弱位置
+
+import os
 
 import pandas
 
+# 设置工作目录为当前脚本所在的目录
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-class FCT_Cmf_1:
+
+class FCT_Srmi:
     def __init__(self):
-        self.factor_name = 'FCT_Cmf_1'
+        self.factor_name = 'FCT_Srmi'
 
     def formula(self, param):
-
         # 从参数字典中提取 DataFrame
         df = param.get('df', None)
         if df is None:
@@ -19,23 +23,19 @@ class FCT_Cmf_1:
         if length is None:
             raise ValueError("param missing 'length'")
 
-        # 从参数字典中读取 factor_name
+        # 从参数字典中获取 factor_name
         factor_name = param.get('factor_name', None)
         if factor_name is None:
             raise ValueError("param missing 'factor_name'")
 
-        # 修改为 pd.concat 批量合并方式
         new_columns = pandas.DataFrame(index=df.index)
 
-        # 计算 MFV
-        new_columns['MFV'] = ((2 * df['close'] - df['low'] - df['high']) / (df['high'] - df['low'])) * df['volume']
+        # 计算滚动最小值和最大值
+        rolling_min = df['close'].rolling(window=length).min()
+        rolling_max = df['close'].rolling(window=length).max()
 
-        # 计算 CMF 所需滚动和
-        rolling_sum_mfv = new_columns['MFV'].rolling(window=length).sum().fillna(0)
-        rolling_sum_volume = df['volume'].rolling(window=length).sum().fillna(0)
-
-        # 最终因子计算
-        new_columns[f'{factor_name}'] = rolling_sum_mfv / rolling_sum_volume
+        # 计算 SRMI：(close - min) / (max - min)
+        new_columns[f'{factor_name}'] = (df['close'] - rolling_min) / (rolling_max - rolling_min + 1e-10)
 
         # 合并进原始 df
         df = pandas.concat([df, new_columns], axis=1)
