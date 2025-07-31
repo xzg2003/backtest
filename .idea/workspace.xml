@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7d903982-0371-40bf-9c81-f76f07eea200" name="更改" comment="调整因子总计算器，允许使用JSON传入参数">
+      <change afterPath="$PROJECT_DIR$/.idea/backtest.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LEEyf_README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backtesting/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backtesting/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backtesting/gen_orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/backtesting/gen_orders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backtesting/performance4.py" beforeDir="false" afterPath="$PROJECT_DIR$/backtesting/performance4.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/back_test_common.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/back_test_common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/bt_common.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/bt_common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/data_common.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/data_common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/read_pkl.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/read_pkl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delete.py" beforeDir="false" afterPath="$PROJECT_DIR$/delete.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/factor_cal/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/factor_cal/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/factor_cal/factor_cal.py" beforeDir="false" afterPath="$PROJECT_DIR$/factor_cal/factor_cal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/factor_cal/factor_name.json" beforeDir="false" afterPath="$PROJECT_DIR$/factor_cal/factor_name.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prepare_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/prepare_data.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LUNARKN1GHT&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/xzg2003/backtest.git&quot;,
+    &quot;accountId&quot;: &quot;3a9d8010-64cb-4e93-b51a-84a245a2d98f&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2ylfeAyYAna7vvi0D2vF3ZjZUzn" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.config.executor": "Run",
+    "Python.delete.executor": "Run",
+    "Python.factor_cal.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "LEEyf__function",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/LEE32/QuantTrading/backtest",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.rainbow.brackets.lite",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\LEE32\QuantTrading\backtest" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-PY-251.26927.90" />
+        <option value="bundled-python-sdk-41e8cd69c857-64d779b69b7a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26927.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="7d903982-0371-40bf-9c81-f76f07eea200" name="更改" comment="" />
+      <created>1750414173898</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1750414173898</updated>
+      <workItem from="1753926692477" duration="469000" />
+      <workItem from="1753927176864" duration="1000000" />
+      <workItem from="1753928202603" duration="67000" />
+      <workItem from="1753929084760" duration="3872000" />
+      <workItem from="1753948059496" duration="677000" />
+      <workItem from="1753948792478" duration="9581000" />
+    </task>
+    <task id="LOCAL-00001" summary="回测框架初始搭建">
+      <option name="closed" value="true" />
+      <created>1753927647898</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1753927647898</updated>
+    </task>
+    <task id="LOCAL-00002" summary="增加结果删除组件">
+      <option name="closed" value="true" />
+      <created>1753928719263</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1753928719263</updated>
+    </task>
+    <task id="LOCAL-00003" summary="修改删除组件，仅保留主数据文件">
+      <option name="closed" value="true" />
+      <created>1753929433223</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1753929433223</updated>
+    </task>
+    <task id="LOCAL-00004" summary=".gitgnore屏蔽data文件">
+      <option name="closed" value="true" />
+      <created>1753929622006</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1753929622006</updated>
+    </task>
+    <task id="LOCAL-00005" summary="数据文件修正">
+      <option name="closed" value="true" />
+      <created>1753929688061</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1753929688062</updated>
+    </task>
+    <task id="LOCAL-00006" summary="放入调整好的各个因子计算器">
+      <option name="closed" value="true" />
+      <created>1753947706559</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1753947706559</updated>
+    </task>
+    <task id="LOCAL-00007" summary="调整因子总计算器，允许使用JSON传入参数">
+      <option name="closed" value="true" />
+      <created>1753947757618</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1753947757618</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="LEEyf_function" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="回测框架初始搭建" />
+    <MESSAGE value="增加结果删除组件" />
+    <MESSAGE value="修改删除组件，仅保留主数据文件" />
+    <MESSAGE value=".gitgnore屏蔽data文件" />
+    <MESSAGE value="数据文件修正" />
+    <MESSAGE value="放入调整好的各个因子计算器" />
+    <MESSAGE value="调整因子总计算器，允许使用JSON传入参数" />
+    <option name="LAST_COMMIT_MESSAGE" value="调整因子总计算器，允许使用JSON传入参数" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/backtest$config.coverage" NAME="config 覆盖结果" MODIFIED="1753929295081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/backtest$delete.coverage" NAME="delete 覆盖结果" MODIFIED="1753929300994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/backtest$factor_cal.coverage" NAME="factor_cal 覆盖结果" MODIFIED="1753947291273" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/factor_cal" />
+  </component>
+</project>

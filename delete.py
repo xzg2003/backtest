@@ -5,14 +5,14 @@ import os
 import csv
 
 from config import instruments
-from config import k_line_types
+from config import k_line_type
 
 
 def delete_all_factors_except_main():
     """
     删除所有因子文件，只保留主数据文件
     """
-    k_lines = k_line_types
+    k_lines = k_line_type
 
     for k_line in k_lines:
         print(f"处理 {k_line} 类型数据...")

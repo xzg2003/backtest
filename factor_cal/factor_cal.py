@@ -129,7 +129,7 @@ def run_one_instrument(args):
     """
     运行单个品种的因子计算
     :param instrument: 品种名称
-    :param k_line_types: K线类型列表
+    :param k_line_type: K线类型列表
     :param instruments_mindff: 品种最小变动单位字典
     :param factor_params: 因子参数JSON文件内容
     """
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     for factor_params in factor_params_list:
         # 准备进程池任务，固定因子参数，对品种进行多线程计算
         tasks = [
-            (instrument, k_line_types, factor_params, instrument_mindiff)
+            (instrument, k_line_type, factor_params, instrument_mindiff)
             for instrument in instruments
         ]
 

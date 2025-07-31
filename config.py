@@ -1,7 +1,7 @@
 global train_list
 
 DATA_DIR = '../data' # 数据目录
-k_line_types = '1d' # K线类型
+k_line_type = '1d' # K线类型
 pre_flag = 1 # 预测标签
 model_name ='xgb' # 模型名称
 model_param = {'max_depth': 6} # 模型参数
