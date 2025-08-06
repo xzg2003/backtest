@@ -37,7 +37,7 @@ class ConvNet(nn.Module):
         #x= self.output(x)
         return x
 
-class MODEL():
+class model():
     def __init__(self, instuments, x_train, y_train, x_test, x_pre_test, param={}):
         if 'epochs' in param.keys():
             epochs = param['epochs']
@@ -88,8 +88,7 @@ class MODEL():
         self.best_model.eval()
         self.result = []
         for instrument in self.instuments:
-            x = self.x_test[self.x_pre_test['instrument'] == instrument].copy()
-            #print(x)
+            x = self.x_test[self.x_test['instrument'] == instrument].copy()
             df = self.x_pre_test[self.x_pre_test['instrument'] == instrument].copy()
             x = x.to_numpy().astype(np.float32)
             x = torch.from_numpy(x).unsqueeze(1).to(self.device)
@@ -97,11 +96,11 @@ class MODEL():
             with torch.no_grad():
                 outputs = self.best_model(x).to('cpu')
                 pre = pd.DataFrame(outputs.numpy(),columns=['pre'])
-                df[f'pre'] = pre.shift(1)   
+                df['pre'] = pre.shift(1)   
                 self.result.append(df)
             
         self.result = pd.concat(self.result, axis=0, ignore_index=True)
-        zutil.save_file(self.result,f'./data/pre.pkl')
+        zutil.save_file(self.result,f'./data/pre.csv')
     
     def run(self):
         self.prepare_train_data()

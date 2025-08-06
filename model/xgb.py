@@ -5,7 +5,7 @@ from pymongo import UpdateOne
 import xgboost as xgb1
 import common.util as zutil
 
-class MODEL():
+class model():
     def __init__(self, instruments, x_train, y_train, x_test, x_pre_test, param):
         self.x_train = x_train # 训练集的特征
         self.y_train = y_train # 训练集的标签
@@ -48,10 +48,10 @@ class MODEL():
                     continue
                 df = df.sort_values(by='datetime', ascending=True)
                 df.reset_index(drop=True,inplace=True)
-                df[f"pre"] =df[f"pre_real"].shift(1)
+                df["pre"] =df["pre_real"].shift(1)
                 df_new = pd.concat([df_new,df])
             
-            zutil.save_file(df_new,f'./data/pre.pkl')
+            df_new.to_csv('./data/pre.csv',index=False)
             t.t()
         except Exception as ex:
             print(ex)

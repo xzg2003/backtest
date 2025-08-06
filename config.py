@@ -3,8 +3,10 @@ global train_list
 DATA_DIR = 'C:/wzx/KCL/dataset/future_data' # 数据目录
 k_line_type = '1d' # K线类型
 pre_flag = 1 # 预测标签
-model_name ='xgb' # 模型名称
+model_name ='xgb' # 模型名称，为空则说明不需要模型，直接使用策略生成仓位
+strategy_name = 'rand_pos' # 策略名称
 model_param = {'max_depth': 6} # 模型参数
+strategy_param = {'t': 0.001} # 策略参数
 
 # 输入参与回测的因子，为空则所有因子全部参与
 train_list=['FCT_Ar_1@5','FCT_Ac_Tr_1@5','FCT_Cmf_1@5','FCT_Br_1@5']
