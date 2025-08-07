@@ -1,9 +1,9 @@
 import pandas as pd
-from backtesting.gen_orders import Trade_Orders
+from backtesting.gen_orders import PositionToOrderConverter
 from backtesting.performance4 import Performance
 import numpy as np
 import os
-from model.import_model import model
+from model.import_model import MODEL
 from strategy.import_strategy import strategy
 import sys
 sys.path.append(os.getcwd())
@@ -66,7 +66,7 @@ class Backtesting():
         x_pre_test = self.pre_prediction_data
 
         # 初始化并运行模型
-        model1 = model(self.instrument_list, X_train, y_train, x_test, x_pre_test, model_param)
+        model1 = MODEL(self.instrument_list, X_train, y_train, x_test, x_pre_test, model_param)
         model1.run()
 
     def gen_year_orders(self):
@@ -84,8 +84,8 @@ class Backtesting():
         }
 
         # 初始化订单生成器并执行主要逻辑
-        a = Trade_Orders(param)
-        a.main()
+        a = PositionToOrderConverter(param)
+        a.run()
         pass
 
     def strategy(self):
@@ -154,5 +154,5 @@ if __name__=="__main__":
     if os.path.exists('./data/order.csv'):
         os.remove('./data/order.csv')
     #if os.path.exists('./data/pre.csv'):
-    #    os.remove('./data/pre.csv')
+        #os.remove('./data/pre.csv')
     run(0)
