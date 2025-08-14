@@ -24,8 +24,8 @@ class FCT_Support_Close_Thr_1:
         if length is None:
             raise ValueError("param missing 'length'")
 
-        # 从参数字典中读取thr
-        thr = param.get('thr', 0.3)
+        # 从参数字典中读取thr，原数据为百分比，这里修正为小数形式
+        thr = param.get('thr', None) / 100
         if thr is None:
             raise ValueError("param missing 'thr'")
 
