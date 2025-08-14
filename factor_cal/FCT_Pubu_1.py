@@ -19,11 +19,8 @@ class FCT_Pubu_1:
         if df is None:
             raise ValueError("no 'df' in param")
 
-        # 从参数字典中提取 short, long
-        short = param.get('short', None)
-        long = param.get('long', None)
-        if short or long is None:
-            raise ValueError("no 'short' or 'long' in param")
+        # 从参数字典中提取 length
+        length = param.get('length', None)
 
         # 从参数字典中提取 factor_name
         factor_name = param.get('factor_name', None)
@@ -33,19 +30,16 @@ class FCT_Pubu_1:
         # 修改为 pd.concat 批量合并方式
         new_columns = pandas.DataFrame(index=df.index)
 
-        # 计算短期均线和长期均线
-        new_columns['ma_short'] = df['close'].rolling(window=short).mean()
-        new_columns['ma_long'] = df['close'].rolling(window=long).mean()
+        # 计算系数
+        coefficient = 2 /(length + 1)
 
-        # 计算短期均线在长期窗口内的分位数位置
-        def pubu_percentile(x):
-            window = x[-long:]
-            if len(window) < long or numpy.all(numpy.isnan(window)):
-                return numpy.nan
-            return numpy.sum(window <= window[-1]) / long
+        # 计算指数移动平均、二层、四层均值
+        new_columns['EMA'] = df['close'] * coefficient + df['close'].shift(1) * (1 - coefficient)
+        new_columns['SMA_2n'] = df['close'].rolling(window=2 * length)
+        new_columns['SMA_4n'] = df['close'].rolling(window=4 * length)
 
-        new_columns[f'{factor_name}'] = new_columns['ma_short'].rolling(window=long, min_periods=long).apply(
-            pubu_percentile, raw=True)
+        # 计算因子
+        new_columns[f'{factor_name}'] = (new_columns['EMA'] + new_columns['SMA_2n'] + new_columns['SMA_4n']) / 3
 
         # 合并进原始 df
         df = pandas.concat([df, new_columns], axis=1)
