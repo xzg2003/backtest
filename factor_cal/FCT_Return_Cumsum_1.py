@@ -24,14 +24,17 @@ class FCT_Return_Cumsum_1:
         if factor_name is None:
             raise ValueError("no 'factor_name' in param")
 
+        # 从参数字典中获取 length
+        length = param.get('length', None)
+
         # 修改为 pd.concat 批量合并方式
         new_columns = pandas.DataFrame(index=df.index)
 
-        # 计算对数收益率
-        new_columns['ret'] = numpy.log(df['close'] / df['close'].shift(1))
+        # 计算每日的收益率
+        new_columns['Return'] = numpy.log(df['close'] - df['close'].shift(1) / df['close'].shift(1))
 
         # 计算累积收益率
-        new_columns['FCT_Return_Cumsum_1'] = new_columns['ret'].cumsum().fillna(0)
+        new_columns[f'{factor_name}'] = new_columns['Return'].rolling(window=length).sum()
 
         # 合并进原始 df
         df = pandas.concat([df, new_columns], axis=1)
