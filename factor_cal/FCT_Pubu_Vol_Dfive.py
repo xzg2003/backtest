@@ -19,11 +19,11 @@ class FCT_Pubu_Vol_Dfive:
         if df is None:
             raise ValueError("no 'df' in param")
 
-        # 从参数字典中获取 short 和 long
-        short = param.get('short', None)
-        long = param.get('long', None)
         # 从参数字典中获取 vol_length
         vol_length = param.get('vol_length', None)
+
+        # 从参数字典中获取 length
+        length = param.get('length', None)
 
         # 从参数字典中获取 k_line_type
         k_line_type = param.get('k_line_type', None)
@@ -51,21 +51,21 @@ class FCT_Pubu_Vol_Dfive:
 
         # 加载 FCT_Pubu_1 数据
         pubu_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      f'../data/{k_line_type}/{instrument}/FCT_Pubu_1.csv')
+                                      f'../data/{k_line_type}/{instrument}/FCT_Pubu_1@{length}.csv')
         if not os.path.exists(pubu_data_path):
             raise FileNotFoundError(f"FCT_Pubu_1 file not found: {pubu_data_path}")
 
         pubu_df = pandas.read_csv(pubu_data_path)
         if 'datetime' in df.columns and 'datetime' in pubu_df.columns:
-            pubu_series = df[['datetime']].merge(pubu_df[['datetime', 'FCT_Pubu_1']], on='datetime', how='left')[
-                'FCT_Pubu_1']
+            pubu_series = df[['datetime']].merge(pubu_df[['datetime', f'FCT_Pubu_1@{length}']], on='datetime', how='left')[
+                f'FCT_Pubu_1@{length}']
         else:
-            pubu_series = pubu_df['FCT_Pubu_1'].reindex(df.index, fill_value=numpy.nan)
+            pubu_series = pubu_df[f'FCT_Pubu_1@{length}'].reindex(df.index, fill_value=numpy.nan)
 
-        new_columns['FCT_Pubu_1'] = pubu_series
+        new_columns[f'FCT_Pubu_1@{length}'] = pubu_series
 
         # 用成交量均值归一化
-        new_columns[f'{factor_name}'] = new_columns['FCT_Pubu_1'] / (new_columns['vol_mean'] + 1e-10)
+        new_columns[f'{factor_name}'] = new_columns[f'FCT_Pubu_1@{length}'] / (new_columns['vol_mean'] + 1e-10)
 
         # 合并进原始 df
         df = pandas.concat([df, new_columns], axis=1)
