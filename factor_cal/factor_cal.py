@@ -61,16 +61,16 @@ def iterate_factor_parameters(json_file_path):
                 # 返回当前因子的参数
                 yield factor_params
 
-        logger.info(f"成功处理 {len(factors)} 个基础因子组的参数")
+        logger.info(f"Success processing {len(factors)} factor basic params")
 
     except FileNotFoundError:
-        logger.error(f"错误: JSON文件 {json_file_path} 不存在")
+        logger.error(f"Error: JSON file {json_file_path} not exist")
         yield {}
     except json.JSONDecodeError:
-        logger.error(f"错误: JSON文件 {json_file_path} 格式不正确")
+        logger.error(f"Error: JSON file {json_file_path} format not correct")
         yield {}
     except Exception as e:
-        logger.error(f"处理因子参数时出错: {str(e)}")
+        logger.error(f"Error at processing factor: {str(e)}")
         yield {}
 
 
@@ -83,7 +83,7 @@ def get_factor_calculator(factor_name):
         factor_class = getattr(module, factor_name)
         return factor_class
     except Exception as e:
-        logger.error(f"导入因子 {factor_name} 失败: {e}")
+        logger.error(f"Fail to import {factor_name} : {e}")
         return None
 
 
@@ -104,22 +104,22 @@ def load_instruments_mindiff():
         return instrument_mindiff
 
     except Exception as e:
-        logger.error(f"加载mindiff数据失败: {str(e)}")
+        logger.error(f"Fail to load mindiff file: {str(e)}")
         return {}
 
 
 def get_factor_data(k_line_type, instrument, factor_name):
     """获取已有因子数据"""
     data_path = f'{DATA_DIR}/{k_line_type}/{instrument}/{factor_name}.csv'
-    logger.info(f"读取数据: {data_path}")
+    logger.info(f"Reading data: {data_path}")
     if not os.path.exists(data_path):
-        logger.warning(f"文件不存在: {data_path}")
+        logger.warning(f"File not exist: {data_path}")
         return None
 
     try:
         df = pd.read_csv(data_path)
     except Exception as e:
-        logger.error(f"读取文件失败: {data_path}, 错误: {e}")
+        logger.error(f"Fail to read file: {data_path}, error: {e}")
         return None
 
     return df
@@ -135,14 +135,14 @@ def run_one_instrument(args):
     """
     """计算单个K线类型下的所有因子"""
     instrument, k_line_type, factor_params, instruments_mindiff = args
-    logger.info(f"开始处理 {instrument} 的 {k_line_type} K线")
+    logger.info(f"Start to process {instrument} at {k_line_type} k_line")
     factor_name = factor_params["factor_name"]
     base_factor_name = factor_params["factor_kind"]
 
     # 动态导入因子计算器
     factor_calculator = get_factor_calculator(base_factor_name)
     if factor_calculator is None:
-        logger.warning(f"未找到因子计算器: {base_factor_name}")
+        logger.warning(f"Fail to find factor calculator: {base_factor_name}")
         return 0, 0
 
     # 设置因子保存路径
@@ -151,7 +151,7 @@ def run_one_instrument(args):
     # 获取mindiff
     mindiff = instruments_mindiff[instrument]
     if mindiff is None:
-        logger.warning(f"{instrument} 未设置最小变动单位")
+        logger.warning(f"{instrument} didn't set mindiff")
         return 0, 0
 
     # 收集所有因子参数
@@ -177,7 +177,7 @@ def run_one_instrument(args):
     calculator_instance = factor_calculator()
 
     try:
-        logger.info(f"计算中: {instrument} {factor_name} {k_line_type}")
+        logger.info(f"calculating: {instrument} {factor_name} {k_line_type}")
 
         # 计算因子
         result = calculator_instance.formula(param)
@@ -186,10 +186,10 @@ def run_one_instrument(args):
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         result.to_csv(save_path, index=False)
 
-        logger.info(f"计算成功: {save_path}")
+        logger.info(f"Calculate success: {save_path}")
         completed += 1
     except Exception as e:
-        logger.exception(f"计算失败: {save_path}, 错误: {e}")
+        logger.exception(f"Calculate failed: {save_path}, error: {e}")
         failed += 1
 
     return completed, failed
@@ -199,13 +199,13 @@ if __name__ == "__main__":
     # 加载最小变动单位
     instrument_mindiff = load_instruments_mindiff()
     if not instrument_mindiff:
-        logger.error("无法加载最小变动单位数据，程序退出")
+        logger.error("Fail to load mindiff data, exit the program")
         exit(1)
 
     # 检查品种设置
     missing_instruments = [inst for inst in instruments if inst not in instrument_mindiff]
     if missing_instruments:
-        logger.warning(f"以下品种未设置最小变动单位: {', '.join(missing_instruments)}")
+        logger.warning(f"No mindiff for following instruments: {', '.join(missing_instruments)}")
 
     # 因子参数JSON文件路径
     factor_json_path = 'factor_name.json'
@@ -220,7 +220,7 @@ if __name__ == "__main__":
         ]
 
         total_tasks = len(tasks)
-        logger.info(f"开始处理 {total_tasks} 个品种的因子计算")
+        logger.info(f"Start processing {total_tasks} factors calculation")
 
         # 单进程调试
         # for task in tasks:
