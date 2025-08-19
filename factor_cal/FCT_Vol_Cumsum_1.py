@@ -23,11 +23,14 @@ class FCT_Vol_Cumsum_1:
         if factor_name is None:
             raise ValueError("no 'factor_name' in param")
 
+        # 从字典中提取 length
+        length = param.get('length', None)
+
         # 初始化 new_columns 用于统一管理中间变量
         new_columns = pandas.DataFrame(index=df.index)
 
         # 计算累积成交量
-        new_columns[f'{factor_name}'] = df['volume'].cumsum().fillna(0)
+        new_columns[f'{factor_name}'] = df['volume'].rolling(window=length).sum()
 
         # 合并到主表
         df = pandas.concat([df, new_columns], axis=1)
