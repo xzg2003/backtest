@@ -4,6 +4,8 @@ import pandas
 import numpy
 import os
 
+from config import k_line_type
+
 # 设置工作目录为当前脚本所在的目录
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,11 +19,8 @@ class FCT_Tsi_Vol_Dfive:
         if df is None:
             raise ValueError("no 'df' in param")
 
-        # 从参数字典中提取 short, long
-        short = param.get('short', None)
-        long = param.get('long', None)
-        if short or long is None:
-            raise ValueError("no 'short' or 'long' in param")
+        # 从参数字典中提取length
+        length = param.get('length', None)
 
         # 从参数字典中提取 vol_length
         vol_length = param.get('vol_length', None)
@@ -33,21 +32,23 @@ class FCT_Tsi_Vol_Dfive:
         if factor_name is None:
             raise ValueError("no 'factor_name' in param")
 
+        k_line_type = param.get('k_line_type', None)
+        instrument = param.get('instrument', None)
+
         # 建议做法：初始化 new_columns 用于统一管理中间变量
         new_columns = pandas.DataFrame(index=df.index)
 
-        # 计算 diff
-        new_columns['diff'] = df['close'].diff()
+        # 导入先前Tsi的计算结果
+        tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     f'../data/{k_line_type}/{instrument}/FCT_Tsi_1.csv')
 
-        # EMA 层级计算
-        ema1 = new_columns['diff'].ewm(span=short, adjust=False).mean()
-        ema2 = ema1.ewm(span=long, adjust=False).mean()
+        tsi_df = pandas.read_csv(tsi_data_path)
+        if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
+            tr_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')['FCT_Tsi_1']
+        else:
+            tr_series = tsi_df['FCT_Tsi_1']
 
-        abs_diff = numpy.abs(new_columns['diff'])
-        abs_ema1 = abs_diff.ewm(span=short, adjust=False).mean()
-        abs_ema2 = abs_ema1.ewm(span=long, adjust=False).mean()
-
-        new_columns['TSI'] = 100 * (ema2 / (abs_ema2 + 1e-10))
+        new_columns['TSI'] = tr_series.reset_index(drop=True)
 
         # 成交量归一化
         new_columns['vol_mean'] = df['volume'].rolling(window=vol_length).mean()
