@@ -40,7 +40,7 @@ class FCT_Tsi_Vol_Dfive:
 
         # 导入先前Tsi的计算结果
         tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     f'../data/{k_line_type}/{instrument}/FCT_Tsi_1.csv')
+                                     f'../data/{k_line_type}/{instrument}/FCT_Tsi_1@{length}.csv')
 
         tsi_df = pandas.read_csv(tsi_data_path)
         if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
