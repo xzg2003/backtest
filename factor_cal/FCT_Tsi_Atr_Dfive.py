@@ -50,11 +50,11 @@ class FCT_Tsi_Atr_Dfive:
 
             tsi_df = pandas.read_csv(tsi_data_path)
             if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
-                tr_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')['FCT_Tsi_1']
+                tsi_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')[f'FCT_Tsi_1@{length}']
             else:
-                tr_series = tsi_df['FCT_Tsi_1']
+                tsi_series = tsi_df[f'FCT_Tsi_1@{length}']
 
-        new_columns['TSI'] = tr_series.reset_index(drop=True)
+        new_columns['TSI'] = tsi_series.reset_index(drop=True)
 
         # 计算 ATR
         high_low = df['high'] - df['low']
