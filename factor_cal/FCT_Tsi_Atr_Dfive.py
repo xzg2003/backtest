@@ -43,14 +43,16 @@ class FCT_Tsi_Atr_Dfive:
         new_columns = pandas.DataFrame(index=df.index)
 
         # 导入先前Tsi的计算结果
-        tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     f'../data/{k_line_type}/{instrument}/FCT_Tsi_1@{length}.csv')
+        tsi_series = param.get(f'FCT_Tsi_1@{length}', None)
+        if tsi_series is None:
+            tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                         f'../data/{k_line_type}/{instrument}/FCT_Tsi_1@{length}.csv')
 
-        tsi_df = pandas.read_csv(tsi_data_path)
-        if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
-            tr_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')['FCT_Tsi_1']
-        else:
-            tr_series = tsi_df['FCT_Tsi_1']
+            tsi_df = pandas.read_csv(tsi_data_path)
+            if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
+                tr_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')['FCT_Tsi_1']
+            else:
+                tr_series = tsi_df['FCT_Tsi_1']
 
         new_columns['TSI'] = tr_series.reset_index(drop=True)
 

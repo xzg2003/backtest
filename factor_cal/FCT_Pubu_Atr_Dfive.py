@@ -63,17 +63,19 @@ class FCT_Pubu_Atr_Dfive:
         new_columns['ATR'] = new_columns['Tr'].rolling(window=atr_length).mean()
 
         # 加载 FCT_Pubu_1 数据
-        pubu_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      f'../data/{k_line_type}/{instrument}/FCT_Pubu_1@{length}.csv')
-        if not os.path.exists(pubu_data_path):
-            raise FileNotFoundError(f"FCT_Pubu_1 file not found: {pubu_data_path}")
+        pubu_series = param.get(f'FCT_Pubu_1@{length}', None)
+        if pubu_series is None:
+            pubu_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                          f'../data/{k_line_type}/{instrument}/FCT_Pubu_1@{length}.csv')
+            if not os.path.exists(pubu_data_path):
+                raise FileNotFoundError(f"FCT_Pubu_1 file not found: {pubu_data_path}")
 
-        pubu_df = pandas.read_csv(pubu_data_path)
-        if 'datetime' in df.columns and 'datetime' in pubu_df.columns:
-            pubu_series = df[['datetime']].merge(pubu_df[['datetime', f'FCT_Pubu_1@{length}']], on='datetime', how='left')[
-                f'FCT_Pubu_1@{length}']
-        else:
-            pubu_series = pubu_df[f'FCT_Pubu_1@{length}'].reindex(df.index, fill_value=numpy.nan)
+            pubu_df = pandas.read_csv(pubu_data_path)
+            if 'datetime' in df.columns and 'datetime' in pubu_df.columns:
+                pubu_series = df[['datetime']].merge(pubu_df[['datetime', f'FCT_Pubu_1@{length}']], on='datetime', how='left')[
+                    f'FCT_Pubu_1@{length}']
+            else:
+                pubu_series = pubu_df[f'FCT_Pubu_1@{length}'].reindex(df.index, fill_value=numpy.nan)
 
         new_columns[f'FCT_Pubu_1@{length}'] = pubu_series
 

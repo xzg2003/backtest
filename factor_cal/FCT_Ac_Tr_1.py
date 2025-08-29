@@ -58,17 +58,20 @@ class FCT_Ac_Tr_1:
         # 前一k线收盘价
         new_columns['close_pre'] = df['close'].shift(1)
 
-        # Tr 数据来自外部文件
-        tr_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    f'../data/{k_line_type}/{instrument}/Tr.csv')
-        if not os.path.exists(tr_data_path):
-            raise FileNotFoundError(f"Tr file not found: {tr_data_path}")
+        # Tr 数据来自参数字典
+        tr_series = param.get('Tr', None)
+        if tr_series is None:
+            # 如果参数中没有Tr数据，则从文件中读取
+            tr_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                        f'../data/{k_line_type}/{instrument}/Tr.csv')
+            if not os.path.exists(tr_data_path):
+                raise FileNotFoundError(f"Tr file not found: {tr_data_path}")
 
-        tr_df = pandas.read_csv(tr_data_path)
-        if 'datetime' in df.columns and 'datetime' in tr_df.columns:
-            tr_series = pandas.merge(df[['datetime']], tr_df, on='datetime', how='left')['Tr']
-        else:
-            tr_series = tr_df['Tr']
+            tr_df = pandas.read_csv(tr_data_path)
+            if 'datetime' in df.columns and 'datetime' in tr_df.columns:
+                tr_series = pandas.merge(df[['datetime']], tr_df, on='datetime', how='left')['Tr']
+            else:
+                tr_series = tr_df['Tr']
 
         new_columns['Tr'] = tr_series.reset_index(drop=True)
 
