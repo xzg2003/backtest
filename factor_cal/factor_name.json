@@ -204,31 +204,31 @@
     {
       "factor_name": "FCT_Pubu_Vol_Dfive@3_1_5",
       "length": 3,
-      "atr_length": 5,
+      "vol_length": 5,
       "FCT_Pubu_1": "Need"
     },
     {
       "factor_name": "FCT_Pubu_Vol_Dfive@5_1_5",
       "length": 5,
-      "atr_length": 5,
+      "vol_length": 5,
       "FCT_Pubu_1": "Need"
     },
     {
       "factor_name": "FCT_Pubu_Vol_Dfive@10_1_5",
       "length": 10,
-      "atr_length": 5,
+      "vol_length": 5,
       "FCT_Pubu_1": "Need"
     },
     {
       "factor_name": "FCT_Pubu_Vol_Dfive@20_1_5",
       "length": 20,
-      "atr_length": 5,
+      "vol_length": 5,
       "FCT_Pubu_1": "Need"
     },
     {
       "factor_name": "FCT_Pubu_Vol_Dfive@30_1_5",
       "length": 30,
-      "atr_length": 5,
+      "vol_length": 5,
       "FCT_Pubu_1": "Need"
     }
   ],

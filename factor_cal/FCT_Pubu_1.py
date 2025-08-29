@@ -35,8 +35,8 @@ class FCT_Pubu_1:
 
         # 计算指数移动平均、二层、四层均值
         new_columns['EMA'] = df['close'] * coefficient + df['close'].shift(1) * (1 - coefficient)
-        new_columns['SMA_2n'] = df['close'].rolling(window=2 * length)
-        new_columns['SMA_4n'] = df['close'].rolling(window=4 * length)
+        new_columns['SMA_2n'] = df['close'].rolling(window=2 * length).mean()
+        new_columns['SMA_4n'] = df['close'].rolling(window=4 * length).mean()
 
         # 计算因子
         new_columns[f'{factor_name}'] = (new_columns['EMA'] + new_columns['SMA_2n'] + new_columns['SMA_4n']) / 3
