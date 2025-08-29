@@ -44,11 +44,11 @@ class FCT_Tsi_Vol_Dfive:
 
         tsi_df = pandas.read_csv(tsi_data_path)
         if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
-            tr_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')[f'FCT_Tsi_1@{length}']
+            tsi_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')[f'FCT_Tsi_1@{length}']
         else:
-            tr_series = tsi_df[f'FCT_Tsi_1@{length}']
+            tsi_series = tsi_df[f'FCT_Tsi_1@{length}']
 
-        new_columns['TSI'] = tr_series.reset_index(drop=True)
+        new_columns['TSI'] = tsi_series.reset_index(drop=True)
 
         # 成交量归一化
         new_columns['vol_mean'] = df['volume'].rolling(window=vol_length).mean()

@@ -43,18 +43,16 @@ class FCT_Tsi_Atr_Dfive:
         new_columns = pandas.DataFrame(index=df.index)
 
         # 导入先前Tsi的计算结果
-        tsi_series = param.get(f'FCT_Tsi_1@{length}', None)
-        if tsi_series is None:
-            tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                         f'../data/{k_line_type}/{instrument}/FCT_Tsi_1@{length}.csv')
+        tsi_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     f'../data/{k_line_type}/{instrument}/FCT_Tsi_1@{length}.csv')
 
-            tsi_df = pandas.read_csv(tsi_data_path)
-            if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
-                tsi_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')[f'FCT_Tsi_1@{length}']
-            else:
-                tsi_series = tsi_df[f'FCT_Tsi_1@{length}']
+        tsi_df = pandas.read_csv(tsi_data_path)
+        if 'datetime' in df.columns and 'datetime' in tsi_df.columns:
+            tsi_series = pandas.merge(df[['datetime']], tsi_df, on='datetime', how='left')[f'FCT_Tsi_1@{length}']
+        else:
+            tsi_series = tsi_df[f'FCT_Tsi_1@{length}']
 
-        new_columns['TSI'] = tsi_series.reset_index(drop=True)
+        new_columns[f'FCT_Tsi_1@{length}'] = tsi_series.reset_index(drop=True)
 
         # 计算 ATR
         high_low = df['high'] - df['low']
@@ -64,7 +62,7 @@ class FCT_Tsi_Atr_Dfive:
         new_columns['ATR'] = tr.rolling(window=atr_length).mean()
 
         # 归一化：TSI / ATR
-        new_columns[f'{factor_name}'] = new_columns['TSI'] / (new_columns['ATR'] + 1e-10)
+        new_columns[f'{factor_name}'] = new_columns[f'FCT_Tsi_1@{length}'] / (new_columns['ATR'] + 1e-10)
 
         # 合并到主表
         df = pandas.concat([df, new_columns], axis=1)
