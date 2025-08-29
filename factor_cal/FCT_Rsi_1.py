@@ -9,7 +9,7 @@ import pandas
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-class RSI:
+class FCT_Rsi_1:
     def __init__(self):
         self.factor_name = 'FCT_Rsi_1'
 
