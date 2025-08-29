@@ -11,7 +11,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 class RSI:
     def __init__(self):
-        self.factor_name = 'RSI'
+        self.factor_name = 'FCT_Rsi_1'
 
     def formula(self, param):
         # 从参数字典中提取 DataFrame
