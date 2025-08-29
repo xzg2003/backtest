@@ -67,5 +67,5 @@ class FCT_Rsi_1:
         df = df.assign(**{col_name: new_column})
 
         # 返回结果（无日期）
-        result = df[[f'RSI@{length}']].copy()
+        result = df[[f'FCT_Rsi_1@{length}']].copy()
         return result
