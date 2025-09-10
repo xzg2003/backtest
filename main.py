@@ -1,5 +1,5 @@
 import pandas as pd
-from backtesting.gen_orders import PositionToOrderConverter
+from backtesting.gen_orders import Trade_Orders
 from backtesting.performance4 import Performance
 import numpy as np
 import os
@@ -84,7 +84,7 @@ class Backtesting():
         }
 
         # 初始化订单生成器并执行主要逻辑
-        a = PositionToOrderConverter(param)
+        a = Trade_Orders(param)
         a.run()
         pass
 
