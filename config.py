@@ -4,7 +4,7 @@ DATA_DIR = 'C:/wzx/KCL/dataset/future_data' # 数据目录
 k_line_type = '1d' # K线类型
 pre_flag = 1 # 预测标签
 model_name ='xgb' # 模型名称，为空则说明不需要模型，直接使用策略生成仓位
-strategy_name = 'rand_pos' # 策略名称
+strategy_name = 'strategy1' # 策略名称
 model_param = {'max_depth': 6} # 模型参数
 strategy_param = {'t': 0.001} # 策略参数
 

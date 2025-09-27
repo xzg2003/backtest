@@ -1,212 +1,254 @@
 
-'''
-将这个部分的订单生产独立出来，生成订单入库，然后用之前的算法计算后面的回测
-'''
-import multiprocessing
-import os
-import sys
-sys.path.append(os.getcwd())
-import common.back_test_common as bt_common
-import common.util as zutil
-from common.data_common import Data_Common
 import pandas as pd
-from config import FEE_FEE,AMOUNT_4_OPEN
+import os
 import math
 import sys
-import os
-from config import *
 
-# 是否可以重复开仓
-TRADE_REPEAT = False
+sys.path.append(os.getcwd())
 
-# 定义多空买卖
-BUY =1
-SELL =-1
-OPEN=0
-CLOSE=1
+from config import FEE_FEE, AMOUNT_4_OPEN
+import common.back_test_common as bt_common
+
+BUY = 1
+SELL = -1
+OPEN = 0
+CLOSE = 1
 
 
-class Trade_Orders():
-    def __init__(self,param):
-        self.length = param['length']
-        self.open_thr = param['open_thr']
-        self.close_thr = param['close_thr']
-        self.t_st = param["st"]
-        self.t_et = param["et"]
-         # 开仓数量
-        self.open_count =0
-        self.pre_flag = "pre"
-        self.model_flag="pre_1"
+class Trade_Orders:
+    def __init__(self, param: dict):
+        # 兼容原参数，但这里只用时间过滤和路径参数
+        self.t_st = param.get("st")
+        self.t_et = param.get("et")
+        self.position_path = param.get("position_path", "./data/position.csv")
+        self.order_path = param.get("order_path", "./data/order.csv")
 
-        # 预测表
-        self.prediction_df = zutil.load_file('./data/pre.pkl')
-        # 持仓记录
-        self.order_path = "./data/order.pkl"
-        self.data_common = Data_Common.create_instance()
-        self.df_data={}
-        self.order_df = zutil.load_file(self.order_path)
-        if len(self.order_df)==0:
-            self.order_df=pd.DataFrame(columns=['datetime','order_date','trading_date','instrument_id','instrument','buyOrSell',
-                                                'openOrClose','price','openPrice','count','count_back','ID','tradeId','mul',
-                                                'flag','model_flag','status','fee'])
+        self.model_flag = "pre_1"
 
-        pass
+        self.order_df = pd.DataFrame(
+            columns=[
+                "datetime",
+                "order_date",
+                "trading_date",
+                "instrument_id",
+                "instrument",
+                "buyOrSell",
+                "openOrClose",
+                "price",
+                "openPrice",
+                "count",
+                "count_back",
+                "ID",
+                "tradeId",
+                "mul",
+                "flag",
+                "model_flag",
+                "status",
+                "fee",
+            ]
+        )
 
-    def calc_orders(self,instrument):
-        t = zutil.Calc_Time(instrument)
-        industry_df = self.prediction_df[(self.prediction_df['instrument']==instrument) &(self.prediction_df['trading_date']>=self.t_st)&(self.prediction_df['trading_date']<=self.t_et)].sort_values(by=['datetime'])
-        industry_df['signal_abs'] = industry_df[self.pre_flag].abs()
-        # signal_std列用于保存信号值的标准差
-        industry_df['signal_std'] = industry_df['signal_abs'].rolling(self.length).mean()
-        # 记录当根k线开仓的这笔交易的收益率、多空标识、持有时长，其列序号为6\7\8
-        industry_df['return'] = 0
-        industry_df['flag'] = 0
-        industry_df['holding'] = 0
-        industry_data_length = industry_df.shape[0]
+    # -------------------- I/O --------------------
 
-        # 如果不能重复开仓，需要跳过一些数据
-        skip_count = 0
-        # 采用轮询的方式进行回测 i的取值范围是从0开始，到行数-1，一共的条数等于行数
-        # print(f'industry_data_length 循环次数：：{industry_data_length}')
-        for i in range(industry_data_length):
-            # print(f"product::{instrument}--industry_data_length:::{industry_data_length} -- {i} ,剩余：{industry_data_length-i}")
-            # 前置的若干数据直接跳过
-            if math.isnan(industry_df['signal_std'].iloc[i]):
-                continue
-            # 如果属于需要跳过的周期
-            if TRADE_REPEAT == False:
-                skip_count = skip_count - 1
-                if skip_count > 0:
-                    continue
-            # 满足开多条件
-            if industry_df[self.pre_flag].iloc[i] > industry_df['signal_std'].iloc[i] * self.open_thr:
-                
-            # if industry_df['pre_signal'].iloc[i] > 0.09 and industry_df['pre_signal'].iloc[i] < 0.10:
-                # 向后寻找平仓位置
-                for j in range(i, industry_data_length):
-                    # TODO modify bu xlzhou  <0
-                    if industry_df[self.pre_flag].iloc[j] < -self.close_thr*industry_df['signal_std'].iloc[i]:
-                        profit = (industry_df['open'].iloc[j] - industry_df['open'].iloc[i]) / industry_df['open'].iloc[i]
-                        industry_df.iloc[i, 14] = profit
-                        industry_df.iloc[i, 15] = 1
-                        industry_df.iloc[i, 16] = j - i
-                        skip_count = j - i
+    def load_position(self) -> pd.DataFrame:
+        if not os.path.exists(self.position_path):
+            raise FileNotFoundError(f"position.csv not found at {self.position_path}")
 
-                        param = self.get_param(industry_df.iloc[i])
-                        param['buyOrSell'] = BUY
-                        param['openOrClose'] = OPEN
-                        self.insert_order(param)
-                        self.open_count +=1
+        # 处理 BOM、列名空格
+        df = pd.read_csv(self.position_path, encoding="utf-8-sig")
+        df.columns = df.columns.str.strip()
 
-                        param2 = self.get_param(industry_df.iloc[j])
-                        param2['openPrice'] = param['price']
-                        param2['buyOrSell'] = param['buyOrSell']
-                        param2['openOrClose'] =CLOSE
-                        param2['count'] = param['count']
-                        param2['count_back'] = param['count_back']
-                        param2['ID']=param['tradeId']
-                        param2['status']="close"
-                        self.insert_order(param2)
-                        # print(instrument + ' buy at ' + str(industry_df.index[i]) + ' sell at ' + str(industry_df.index[j]) + ' get profit: ' + str(profit))
-                        break
-            # 满足开空条件
-            elif industry_df[self.pre_flag].iloc[i] < industry_df['signal_std'].iloc[i] * (-self.open_thr):
-                
-            # elif industry_df['pre_signal'].iloc[i] < -0.09 and industry_df['pre_signal'].iloc[i] > -0.10:
-                # 向后寻找平仓位置
-                for j in range(i, industry_data_length):
-                    # TODO modify bu xlzhou  >0
-                    if industry_df[self.pre_flag].iloc[j] > self.close_thr*industry_df['signal_std'].iloc[i]:
-                        profit = (industry_df['open'].iloc[i] - industry_df['open'].iloc[j]) / industry_df['open'].iloc[i]
-                        industry_df.iloc[i, 14] = profit
-                        industry_df.iloc[i, 15] = -1
-                        industry_df.iloc[i, 16] = j - i
-                        skip_count = j - i
+        required = ["datetime", "instrument", "open", "mul", "pos"]
+        missing = [c for c in required if c not in df.columns]
+        if missing:
+            raise ValueError(
+                f"position.csv 缺少必须字段 {missing}，至少需要 {required}"
+            )
 
-                        param = self.get_param(industry_df.iloc[i])
-                        param['buyOrSell'] = SELL
-                        param['openOrClose'] = OPEN
-                        self.insert_order(param)
-                        self.open_count +=1
+        # 兜底：缺 instrument_id / trading_date 时自动填充
+        if "instrument_id" not in df.columns:
+            df["instrument_id"] = df["instrument"]
+        if "trading_date" not in df.columns:
+            df["trading_date"] = df["datetime"]
 
-                        param2 = self.get_param(industry_df.iloc[j])
-                        param2['openPrice'] = param['price']
-                        param2['buyOrSell'] = param['buyOrSell']
-                        param2['openOrClose'] =CLOSE
-                        param2['count'] = param['count']
-                        param2['count_back'] = param['count_back']
-                        param2['ID']=param['tradeId']
-                        param2['status']="close"
-                        self.insert_order(param2)
-                        # print(instrument + ' sell short at ' + str(industry_df.index[i]) + ' buy to cover at ' + str(industry_df.index[j]) + ' get profit: ' + str(profit))
-                        break
-        
-        # # 按照成交额过滤交易
-        # print(f"---过滤前-----{instrument}----------{len(industry_df[industry_df['return']!=0])}")
-        # industry_df.loc[industry_df['FCT_Amount-20'] < 50, ['return', 'flag', 'holding']] = 0
-        # print(f"---过滤后-----{instrument}----------{len(industry_df[industry_df['return']!=0])}")
+        # 时间过滤（如果提供 st/et）
+        if self.t_st:
+            df = df[df["trading_date"] >= self.t_st]
+        if self.t_et:
+            df = df[df["trading_date"] <= self.t_et]
 
-        t.t()
-        pass
+        # 排序：先品种再时间
+        df = df.sort_values(by=["instrument", "datetime"]).reset_index(drop=True)
+        return df
 
-    def get_param(self,doc):
-        # 判断前面有没有未平仓的订单
-        # 0买入 1卖出  buyOrSell
-        # 0开   1平    openOrClose
+    def save_orders(self):
+        # 保证目录存在
+        # 如果目录已经存在，则在后面追加
+        if not os.path.exists(self.order_path):
+            self.order_df.to_csv(self.order_path, index=False)
+            print(f"Order file saved to {self.order_path}")
+        else:
+            # 先打开原文件，再合并
+            existing = pd.read_csv(self.order_path)
+            self.order_df = pd.concat([existing, self.order_df], ignore_index=True)
+            self.order_df.to_csv(self.order_path, index=False)
+
+    # -------------------- 构造订单 --------------------
+
+    def _build_open(self, row, direction: int):
+        """direction: 1=开多, -1=开空"""
+        price = float(row["open"])
+        mul = float(row["mul"]) if pd.notna(row["mul"]) else 0.0
+        if not (price > 0 and mul > 0):
+            # 无法计算合约张数，跳过开仓
+            return None, None
+
+        count = math.floor(AMOUNT_4_OPEN / (price * mul))
+        if count <= 0:
+            # 资金不足以开1手，跳过
+            return None, None
+
         trade_id = bt_common.generate_unique_string()
-        price = doc['open']
-        try:
-            # count = math.floor(self.amount / (price * doc['mul'] * 0.15))
-            count = math.floor(AMOUNT_4_OPEN / (price * doc['mul']))
-        except Exception as ex:
-            count = -1
-            print(ex)
-            # print(f"doc['instrument']:::{doc['instrument']}   price::{price} amount::{AMOUNT_4_OPEN} mul::{doc['mul']}")
-        param={
-                'datetime':doc['datetime'],
-                'order_date':doc['datetime'],
-                'trading_date':doc['trading_date'],
-                'instrument':doc['instrument'],
-                'instrument_id':doc['instrument_id'],
-                'buyOrSell':BUY,
-                "openOrClose":OPEN,
-                # 开仓价进入
-                "price":price,
-                "openPrice":price,
-                "count":count,
-                "count_back":count,
-                # 关联ID
-                "ID":trade_id,
-                # 交易ID
-                "tradeId":trade_id,
-                "mul":int(doc['mul']),
-                "model_flag":self.model_flag,
-                "status":"open",
-                }           
-        return param
+        order = {
+            "datetime": row["datetime"],
+            "order_date": row["datetime"],
+            "trading_date": row["trading_date"],
+            "instrument_id": row["instrument_id"],
+            "instrument": row["instrument"],
+            "buyOrSell": BUY if direction > 0 else SELL,  # 仓位方向
+            "openOrClose": OPEN,
+            "price": price,
+            "openPrice": price,
+            "count": count,
+            "count_back": count,
+            "ID": trade_id,
+            "tradeId": trade_id,
+            "mul": int(mul),
+            "flag": 0,
+            "model_flag": self.model_flag,
+            "status": "open",
+            "fee": count * price * mul * FEE_FEE,
+        }
+        # 记录开仓信息，供后续平仓使用
+        opened = {
+            "trade_id": trade_id,
+            "direction": 1 if direction > 0 else -1,
+            "open_price": price,
+            "count": count,
+            "mul": mul,
+        }
+        return order, opened
 
-    def insert_order(self,param):
-        try:
-            if param['count']==0:
-                return
-            fee = param['count']*param['price']*param['mul']*FEE_FEE
-            param['fee'] =fee
-            self.order_df.loc[len(self.order_df)] = param
-            if param['status']=="close":
-                self.order_df.loc[self.order_df['ID']==param["ID"],"status"] = "close"
-        except Exception as ex:
-            print(f"ex::{ex}")
-            pass
-    
+    def _build_close(self, row, opened: dict):
+        """根据开仓信息生成对应的平仓单（方向保持为原仓位方向）"""
+        price = float(row["open"])
+        mul = float(opened["mul"])
+        order = {
+            "datetime": row["datetime"],
+            "order_date": row["datetime"],
+            "trading_date": row["trading_date"],
+            "instrument_id": row["instrument_id"],
+            "instrument": row["instrument"],
+            "buyOrSell": BUY if opened["direction"] > 0 else SELL,  # 仍然是仓位方向
+            "openOrClose": CLOSE,
+            "price": price,
+            "openPrice": opened["open_price"],
+            "count": opened["count"],
+            "count_back": opened["count"],
+            "ID": opened["trade_id"],
+            "tradeId": opened["trade_id"],
+            "mul": int(mul),
+            "flag": 0,
+            "model_flag": self.model_flag,
+            "status": "close",
+            "fee": opened["count"] * price * mul * FEE_FEE,
+        }
+        return order
+
+    # -------------------- 状态机核心 --------------------
+
+    def convert_to_orders(self):
+        df = self.load_position()
+
+        for ins, g in df.groupby("instrument", sort=False):
+            prev_pos = 0  # 上一时刻仓位方向
+            opened = None  # 已开仓的挂钩信息（若存在）
+
+            for _, row in g.iterrows():
+                # 规范化信号到 {-1,0,1}
+                raw = row["pos"]
+                curr_pos = 0 if pd.isna(raw) else (1 if raw > 0 else (-1 if raw < 0 else 0))
+
+                # 0 -> +1 / -1 ：直接开仓
+                if prev_pos == 0 and curr_pos != 0:
+                    open_order, opened = self._build_open(row, curr_pos)
+                    if open_order:
+                        self.order_df.loc[len(self.order_df)] = open_order
+                        prev_pos = curr_pos
+                    else:
+                        # 开仓失败（资金不足/价格无效），保持空仓状态
+                        prev_pos = 0
+                        opened = None
+                    continue
+
+                # +1（持多）
+                if prev_pos == 1:
+                    if curr_pos == 1:
+                        # 持有不变
+                        continue
+                    # 平多
+                    if opened:
+                        close_order = self._build_close(row, opened)
+                        self.order_df.loc[len(self.order_df)] = close_order
+                        opened = None
+
+                    if curr_pos == 0:
+                        prev_pos = 0
+                        continue
+                    if curr_pos == -1:
+                        # 平多后开空
+                        open_order, opened = self._build_open(row, -1)
+                        if open_order:
+                            self.order_df.loc[len(self.order_df)] = open_order
+                            prev_pos = -1
+                        else:
+                            prev_pos = 0
+                            opened = None
+                        continue
+
+                # -1（持空）
+                if prev_pos == -1:
+                    if curr_pos == -1:
+                        # 持有不变
+                        continue
+                    # 平空
+                    if opened:
+                        close_order = self._build_close(row, opened)
+                        self.order_df.loc[len(self.order_df)] = close_order
+                        opened = None
+
+                    if curr_pos == 0:
+                        prev_pos = 0
+                        continue
+                    if curr_pos == 1:
+                        # 平空后开多
+                        open_order, opened = self._build_open(row, 1)
+                        if open_order:
+                            self.order_df.loc[len(self.order_df)] = open_order
+                            prev_pos = 1
+                        else:
+                            prev_pos = 0
+                            opened = None
+                        continue
+
+            # 该品种到最后还有未平仓 -> 在最后一条记录处强制平仓
+            if prev_pos != 0 and opened is not None and len(g) > 0:
+                last_row = g.iloc[-1]
+                close_order = self._build_close(last_row, opened)
+                self.order_df.loc[len(self.order_df)] = close_order
+
+    # -------------------- 入口 --------------------
 
     def main(self):
-        #info = self.data_common.get_futures_mul()
-        pool = multiprocessing.Pool(processes=4)
-        for ins in instruments:
-            # pool.apply_async(self.calc_orders,args=(ins,))
-            self.calc_orders(ins)
-        
-        pool.close()
-        pool.join()
-        zutil.save_file(self.order_df,"./data/order.pkl")
-        #print(zutil.load_file(self.order_df))
+        self.convert_to_orders()
+        self.save_orders()

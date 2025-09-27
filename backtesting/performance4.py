@@ -97,7 +97,7 @@ class Performance():
         self.daily_df = pd.DataFrame(columns=["date",'profit','model_flag','fee','long_fee','short_fee','profit_all',
                                               'profit_float','rate','sum_profit','sum_rate','sum_long_profit','sum_short_profit'])
         # 订单表
-        self.order_df = zutil.load_file("./data/order.pkl")
+        self.order_df = pd.read_csv('./data/order.csv')
 
 
     def get_instruments(self):

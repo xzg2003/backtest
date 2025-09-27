@@ -3,14 +3,14 @@ from backtesting.gen_orders import Trade_Orders
 from backtesting.performance4 import Performance
 import numpy as np
 import os
-from model.import_model import model
+
 from strategy.import_strategy import strategy
 import sys
 sys.path.append(os.getcwd())
 import common.util as zutil
 from common.data_common import Data_Common
 from config import *
-from prepare_data import prepare_data
+from backtesting.prepare_data import prepare_data
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # 定义多空买
@@ -66,6 +66,8 @@ class Backtesting():
         x_pre_test = self.pre_prediction_data
 
         # 初始化并运行模型
+        if model_name!='':
+            from model.import_model import model
         model1 = model(self.instrument_list, X_train, y_train, x_test, x_pre_test, model_param)
         model1.run()
 
@@ -126,21 +128,23 @@ def step2(start_time, end_time):
 
     print("Performance end")
 
-def run(i):
-    print(f"----------{i}--------")
-    tt = zutil.Calc_Time(f"backtesting-- {i}",level=1)
+def run():
+    #print(f"----------{i}--------")
+    
     
     for year in years_list:
+        tt = zutil.Calc_Time(f"backtesting-- {year}",level=1)
+        print(f"========{year}========")
         # 创建回测实例
         b = Backtesting(year)
         # 使用模型预测
-        if model_name!='': 
+        if model_name!='':
             b.model()
         # 使用策略产生交易信号    
         b.strategy()
         # 产生交易记录
         b.gen_year_orders()
-    tt.t()
+        tt.t()
     # 计算费率比数据
     step2(f"{years_list[0]}-01-01",f"{years_list[-1]}-12-31")
     pass
@@ -153,6 +157,6 @@ if __name__=="__main__":
     """
     if os.path.exists('./data/order.csv'):
         os.remove('./data/order.csv')
-    #if os.path.exists('./data/pre.csv'):
-    #    os.remove('./data/pre.csv')
-    run(0)
+    if os.path.exists('./data/pre.csv'):
+        os.remove('./data/pre.csv')
+    run()
